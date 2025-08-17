@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harry Potter Stopwatch</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #2c3e50, #4ca1af);
+      font-family: 'Cinzel', serif;
+      color: white;
+    }
+    .container {
+      text-align: center;
+      background: rgba(255,255,255,0.1);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .time {
+      font-size: 48px;
+      margin: 20px 0;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 8px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #e67e22, #d35400);
+      color: white;
+      transition: transform 0.1s ease;
+    }
+    button:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 15px;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Stopwatch</h1>
+    <div class="time" id="display">00:00:00</div>
+    <div class="buttons">
+      <button onclick="start()">Start</button>
+      <button onclick="stop()">Stop</button>
+      <button onclick="reset()">Reset</button>
+      <button onclick="lap()">Lap</button>
+      <button onclick="clearLaps()">Clear Laps</button>
+    </div>
+    <ul id="laps"></ul>
+  </div>
+
+  <script>
+    let startTime = 0;
+    let elapsedTime = 0;
+    let timerInterval;
+    let running = false;
+
+    function updateTime() {
+      const now = Date.now() - startTime + elapsedTime;
+      const hrs = String(Math.floor(now / 3600000)).padStart(2, '0');
+      const mins = String(Math.floor((now % 3600000) / 60000)).padStart(2, '0');
+      const secs = String(Math.floor((now % 60000) / 1000)).padStart(2, '0');
+      document.getElementById("display").textContent = `${hrs}:${mins}:${secs}`;
+    }
+
+    function start() {
+      if (!running) {
+        startTime = Date.now();
+        timerInterval = setInterval(updateTime, 1000);
+        running = true;
+      }
+    }
+
+    function stop() {
+      if (running) {
+        clearInterval(timerInterval);
+        elapsedTime += Date.now() - startTime;
+        running = false;
+      }
+    }
+
+    function reset() {
+      clearInterval(timerInterval);
+      startTime = 0;
+      elapsedTime = 0;
+      running = false;
+      document.getElementById("display").textContent = "00:00:00";
+      document.getElementById("laps").innerHTML = "";
+    }
+
+    function lap() {
+      if (running || elapsedTime > 0) {
+        const lapTime = document.getElementById("display").textContent;
+        const li = document.createElement("li");
+        li.textContent = lapTime;
+        document.getElementById("laps").appendChild(li);
+      }
+    }
+
+    function clearLaps() {
+      document.getElementById("laps").innerHTML = "";
+    }
+  </script>
+</body>
+</html>
